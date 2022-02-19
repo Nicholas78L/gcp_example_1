@@ -3,6 +3,7 @@ from google.cloud import bigquery
 from google.cloud import storage
 # pip install --upgrade google-cloud-storage
 
+SERVICE_ACCOUNT_JSON = r'/Users/a1/Desktop/gcp_test_key.json'
 
 def write_in_local_file(file_name, data):
     print(f'Data is: {data}')
@@ -14,7 +15,7 @@ def upload_to_bucket(blob_name, path_to_file, bucket_name): #(как будет 
 
     # Explicitly use service account credentials by specifying the private key
     # file.
-    storage_client = storage.Client.from_service_account_json('gcp_test_key.json')
+    storage_client = storage.Client.from_service_account_json(SERVICE_ACCOUNT_JSON)
 
     #print(buckets = list(storage_client.list_buckets())
 
@@ -27,7 +28,7 @@ def upload_to_bucket(blob_name, path_to_file, bucket_name): #(как будет 
 def gcs_to_bq():
     table_id = ''
     # Construct a BigQuery client object.
-    client = bigquery.Client.from_service_account_json('gcp_test_key.json')
+    client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_JSON)
 
     # TODO(developer): Set table_id to the ID of the table to create.
     table_id = "scrappers-341616.gcp_test.example1"
@@ -39,7 +40,7 @@ def gcs_to_bq():
         ],
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
     )
-    # uri = "gs://cloud-samples-data/bigquery/us-states/us-states.json"
+
     uri = 'gs://gcp_example_bucket/gcp_testing/cloud_file.json'
 
     load_job = client.load_table_from_uri(
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         "post_abbr": "Betelgeusian Street"
     }
 
-    # write_in_local_file('tmp/local_file.json', data)
+    write_in_local_file('tmp/local_file.json', data)
     upload_to_bucket('gcp_testing/cloud_file.json', 'tmp/local_file.json', 'gcp_example_bucket')
     gcs_to_bq()
 
